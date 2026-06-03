@@ -1,0 +1,123 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-5">
+    <div class="card p-4 mx-auto mb-5 shadow-sm border-0" style="max-width: 500px;">
+        <form action="/analyze" method="POST">
+            <div class="mb-3">
+                <label for="cryptoInput" class="form-label fw-bold">Search an Asset:</label>
+                <input class="form-control" list="cryptoOptions" name="cryptocurrency" id="cryptoInput" placeholder="Type a ticker (e.g., BTC)..." required autocomplete="off">
+                <datalist id="cryptoOptions">
+                    <option value="BTC">Bitcoin</option>
+                    <option value="ETH">Ethereum</option>
+                    <option value="SOL">Solana</option>
+                    <option value="XRP">Ripple</option>
+                    <option value="DOGE">Dogecoin</option>
+                    <option value="ADA">Cardano</option>
+                    <option value="LINK">Chainlink</option>
+                    <option value="DOT">Polkadot</option>
+                </datalist>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Consult the Oracle</button>
+        </form>
+    </div>
+
+    <% if (locals.cryptocurrency) { %>
+        
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="border-bottom pb-2">Analysis for <%= cryptocurrency %></h3>
+            </div>
+        </div>
+
+        <div class="row text-center mb-4">
+            <div class="col-md-6 mb-3">
+                <div class="card p-4 bg-white shadow-sm border-0 h-100">
+                    <h5 class="text-muted text-uppercase" style="font-size: 0.9rem;">Tomorrow's Predicted Price</h5>
+                    <h1 class="text-success display-5 fw-bold">$<%= predictedPrice %></h1>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card p-4 bg-white shadow-sm border-0 h-100">
+                    <h5 class="text-muted text-uppercase" style="font-size: 0.9rem;">Model Accuracy (MAE)</h5>
+                    <h1 class="text-danger display-5 fw-bold">± $<%= errorMargin %></h1>
+                    <small class="text-muted">30-day Multivariate Regression</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card p-4 bg-white shadow-sm border-0">
+                    <h4 class="mb-3">30-Day Price History</h4>
+                    <canvas id="priceChart" height="100" 
+                        data-dates="<%= JSON.stringify(locals.chartDates || []) %>" 
+                        data-prices="<%= JSON.stringify(locals.chartPrices || []) %>">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <h4 class="mb-3">📰 Recent Headlines</h4>
+                <div class="list-group shadow-sm mb-5">
+                    <% articles.forEach(article => { %>
+                        <a href="<%= article.url %>" target="_blank" class="list-group-item list-group-item-action py-3 border-0 border-bottom">
+                            <%= article.title %>
+                        </a>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            // Target the canvas element FIRST
+            const canvasElement = document.getElementById('priceChart');
+            const ctx = canvasElement.getContext('2d');
+
+            // Read the data directly from the canvas HTML attributes!
+            // We use JSON.parse to turn the strings back into usable JavaScript arrays
+            const xDates = JSON.parse(canvasElement.dataset.dates);
+            const yPrices = JSON.parse(canvasElement.dataset.prices);
+
+
+            // 2. Draw the Chart if data exists
+            if (xDates.length > 0) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: xDates,
+                        datasets: [{
+                            label: 'Closing Price (USD)',
+                            data: yPrices,
+                            borderColor: '#0d6efd', 
+                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            fill: true,
+                            tension: 0.3 
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false } 
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) { return '$' + value; }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        </script>
+
+    <% } %>
+</div>
+
+<%- include("partials/footer.ejs") %>
