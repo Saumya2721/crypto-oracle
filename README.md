@@ -29,10 +29,11 @@ Built as an advanced Web Development Capstone Project.
    npm install
 3. **Configure the Environment:**
   *Create a .env configuration file in the project's root folder and provide your custom private keys:*
+   ```env
   PORT=3000
   ALPHA_VANTAGE_KEY="YOUR_ALPHA_VANTAGE_DEVELOPER_KEY"
   NEWS_API_KEY="YOUR_GUARDIAN_API_KEY"
 
-4. **Launch the Web App:**
+5. **Launch the Web App:**
    ```bash
    node index.js
