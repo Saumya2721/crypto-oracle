@@ -1,6 +1,21 @@
+# Node/React
 node_modules/
+dist/
 .env
+
+# Python
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# OS Files
 .DS_Store
-# Ignore built assets and training datasets
-client/dist/
+Thumbs.db
+
+# Data & Output
 ml_server/crypto_pooled_dataset.csv
+ml_server/cache/
