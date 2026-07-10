@@ -1,3 +1,6 @@
 node_modules/
 .env
 .DS_Store
+# Ignore built assets and training datasets
+client/dist/
+ml_server/crypto_pooled_dataset.csv

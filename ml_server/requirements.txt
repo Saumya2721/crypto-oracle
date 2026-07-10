@@ -1,0 +1,8 @@
+flask
+flask-cors
+xgboost==3.3.0
+pandas
+numpy
+ta
+requests
+yfinance
