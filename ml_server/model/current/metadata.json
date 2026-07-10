@@ -1,0 +1,45 @@
+{
+  "trained_at": "2026-07-10T08:48:42.181331",
+  "model_type": "XGBoost",
+  "hyperparameters": {
+    "subsample": 0.8,
+    "reg_lambda": 5.0,
+    "reg_alpha": 0.0,
+    "n_estimators": 200,
+    "max_depth": 3,
+    "learning_rate": 0.2,
+    "colsample_bytree": 1.0
+  },
+  "target_threshold": 0.01,
+  "coins": [
+    "Bitcoin",
+    "Cardano",
+    "Chainlink",
+    "Dogecoin",
+    "Ethereum",
+    "Polkadot",
+    "Ripple",
+    "Solana"
+  ],
+  "test_macro_f1": 0.3947,
+  "test_accuracy": 0.398,
+  "confidence_gating": {
+    "0.5": {
+      "accuracy": 0.4097,
+      "coverage_pct": 36.7
+    },
+    "0.6": {
+      "accuracy": 0.4257,
+      "coverage_pct": 10.5
+    },
+    "0.7": {
+      "accuracy": 0.4853,
+      "coverage_pct": 2.1
+    }
+  },
+  "label_mapping": {
+    "0": -1,
+    "1": 0,
+    "2": 1
+  }
+}

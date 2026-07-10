@@ -1,39 +1,57 @@
-# Crypto Oracle: Predictive Market & Sentiment Dashboard
+# Crypto Oracle
 
-A full-stack financial application that implements a multivariate linear regression machine learning pipeline to forecast next-day cryptocurrency opening prices. By ingesting historical market constraints (OHLCV metrics) alongside contextual data, the application optimizes for accuracy while displaying interactive tracking analytics and corresponding real-time financial sentiment.
+A full-stack crypto price-direction prediction application using a pre-trained XGBoost model to predict next-day bullish/neutral/bearish trends for 8 cryptocurrencies.
 
-Built as an advanced Web Development Capstone Project.
+## Setup
 
-## Key Architectural & Engineering Features
-* **Machine Learning Engine:** Dynamically calculates predictive constraints utilizing a 4-feature Autoregressive (AR) structure via `ml-regression-multivariate-linear`. The pipeline optimizes weight values across daily Open, Volume, High, and Low parameters.
-* **Accuracy Evaluation & Testing:** Computes Mean Absolute Error (MAE) sequentially on server initialization. The system performs comparative diagnostics between a compact 2-feature baseline (Open & Volume) and a 4-feature setup, proving that raw volatility metrics reduce structural tracking errors significantly.
-* **Multi-Stream Data Pipeline:** Connects asynchronous REST API endpoints with Axios pipelines, using strict date sorting and key scrubbing to process raw JSON into clean computational matrices.
-* **Context-Driven Search Ingestion:** Implements customized context-filtered queries via Boolean parameters (`AND crypto`) across dedicated media pipelines (The Guardian), restricting inputs to corporate and technology verticals to eradicate acronym search collisions.
-* **Client-Side Rendering & UI:** Renders modular partial layouts using EJS templates. Securely shifts metrics to the presentation tier using HTML5 data attributes (`data-*`), decoupling computational arrays from script evaluation while eliminating Cross-Site Scripting (XSS) risks.
-* **Interactive Charting Vector:** Renders highly fluid, tooltip-supported graphical history maps built directly with Chart.js line matrices.
-
-## Tech Stack
-* **Runtime Environment:** Node.js
-* **Backend Framework:** Express.js
-* **Data Processing & ML:** `ml-regression-multivariate-linear`, Axios, Dotenv
-* **Frontend Matrix:** EJS (Embedded JavaScript Templates), Chart.js, Bootstrap 5, Native HTML5 Datalists
-
-## Local Installation & Setup
-
-1. **Clone the Repository:**
+1. Copy `.env.example` to `.env` and fill in your keys.
+2. Install Python dependencies:
    ```bash
-   git clone [https://github.com/Saumya2721/crypto-oracle.git](https://github.com/Saumya2721/crypto-oracle.git)
-   cd crypto-oracle
-2. **Load Global Dependencies:**
+   cd ml_server
+   python -m venv venv
+   venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+3. Install Node.js dependencies:
    ```bash
-   npm install
-3. **Configure the Environment:**
-  *Create a .env configuration file in the project's root folder and provide your custom private keys:*
-   ```env
-  PORT=3000
-  ALPHA_VANTAGE_KEY="YOUR_ALPHA_VANTAGE_DEVELOPER_KEY"
-  NEWS_API_KEY="YOUR_GUARDIAN_API_KEY"
+   cd server && npm install
+   cd ../client && npm install
+   ```
 
-5. **Launch the Web App:**
+## Model Training Workflow
+
+If you want to retrain the model on fresh historical data:
+
+1. **Update Shared Cache**: Fetch the latest Fear & Greed, Macro, and On-chain data.
    ```bash
-   node index.js
+   cd ml_server
+   python data_cache.py
+   ```
+2. **Generate Training Dataset**: This will fetch the full historical Binance OHLCV data, apply feature engineering, and merge it with the shared cache to produce `crypto_pooled_dataset.csv`.
+   ```bash
+   python data_pipeline.py
+   ```
+3. **Train**: Train the XGBoost model in your preferred environment (e.g. Google Colab) using the `crypto_pooled_dataset.csv` file. 
+4. **Deploy**: Move your new `model_v1.json`, `feature_cols.json`, and `metadata.json` into `ml_server/model/current/`.
+5. **Validate**: Verify the deployed model files before starting the server.
+   ```bash
+   python validate_model.py
+   ```
+
+## Running the Application
+
+1. **Start the ML Server (Flask)**:
+   ```bash
+   cd ml_server
+   python app.py
+   ```
+2. **Start the Backend (Express)**:
+   ```bash
+   cd server
+   npm start
+   ```
+3. **Start the Frontend (React/Vite)**:
+   ```bash
+   cd client
+   npm run dev
+   ```
